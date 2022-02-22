@@ -5,6 +5,7 @@ import { postDataResult } from "../interfaces";
 import { getSortedPostsData } from "../lib/posts";
 import utilStyles from "../styles/utils.module.css";
 
+// 外部データを取得するために使う関数
 export const getStaticProps = () => {
   const allPostsData = getSortedPostsData();
   return {
