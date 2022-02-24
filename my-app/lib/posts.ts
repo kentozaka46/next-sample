@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { remark } from "remark";
+import html from "remark-html";
 import { postDataResult } from "../interfaces";
 
 // nodeコマンド実行時のワーキングディレクトリパスを取得して正規化する
@@ -63,15 +65,22 @@ export function getAllPostIds() {
 }
 
 // idをもとに投稿ブログをレンダリングする
-export function getPostData(id: string) {
+export async function getPostData(id: string) {
   const fullPath = path.join(postsDirectory, `${id}.md`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
 
   const matterResult = matter(fileContents);
 
-  // idとデータを組み合わせる
+  // マークダウンのコンテンツをHTMLに変換
+  const processedContent = await remark()
+    .use(html)
+    .process(matterResult.content);
+  const contentHtml = processedContent.toString();
+
+  // データをidとHTMLコンテンツと組み合わせて返す
   return {
     id,
+    contentHtml,
     ...matterResult.data,
   };
 }
