@@ -3,6 +3,7 @@ import { getAllPostIds, getPostData } from "../../lib/posts";
 import { postData } from "../../interfaces";
 
 export async function getStaticProps({ params }: { params: { id: string } }) {
+  // 非同期で実行できるようにawaitを追加
   const data = await getPostData(params.id);
   return {
     props: {
@@ -27,6 +28,7 @@ export default function Post({ data }: { data: postData }) {
       <br />
       {data.date}
       <br />
+      {/* dangerouslySetInnerHTMLを使用してcontentHtmlをレンダリングすることにより、Reactから安全にHTMLを生成する */}
       <div dangerouslySetInnerHTML={{ __html: data.contentHtml }} />
     </Layout>
   );
