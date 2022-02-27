@@ -4,6 +4,8 @@ import Layout, { siteTitle } from "../components/layout";
 import { postDataResult } from "../interfaces";
 import { getSortedPostsData } from "../lib/posts";
 import utilStyles from "../styles/utils.module.css";
+import Link from "next/link";
+import Date from "../components/date";
 
 // 外部データを取得するために使う関数
 export const getStaticProps = () => {
@@ -37,11 +39,13 @@ const Home: NextPage<{ allPostsData: Array<postDataResult> }> = ({
         <ul className={utilStyles.list}>
           {allPostsData.map((post) => (
             <li className={utilStyles.listItem} key={post.id}>
-              {post.data.title}
+              <Link href={`/posts/${post.id}`}>
+                <a>{post.data.title}</a>
+              </Link>
               <br />
-              {post.id}
-              <br />
-              {post.data.date}
+              <small className={utilStyles.lightText}>
+                <Date dateString={post.data.date} />
+              </small>
             </li>
           ))}
         </ul>
