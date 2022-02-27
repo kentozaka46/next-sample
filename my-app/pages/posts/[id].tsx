@@ -1,6 +1,9 @@
 import Layout from "../../components/layout";
 import { getAllPostIds, getPostData } from "../../lib/posts";
 import { postData } from "../../interfaces";
+import Head from "next/head";
+import Date from "../../components/date";
+import utilStyles from "../../styles/utils.module.css";
 
 export async function getStaticProps({ params }: { params: { id: string } }) {
   // 非同期で実行できるようにawaitを追加
@@ -22,14 +25,14 @@ export async function getStaticPaths() {
 export default function Post({ data }: { data: postData }) {
   return (
     <Layout>
-      {data.title}
-      <br />
-      {data.id}
-      <br />
-      {data.date}
-      <br />
-      {/* dangerouslySetInnerHTMLを使用してcontentHtmlをレンダリングすることにより、Reactから安全にHTMLを生成する */}
-      <div dangerouslySetInnerHTML={{ __html: data.contentHtml }} />
+      <Head>{data.title}</Head>
+      <article>
+        <h1 className={utilStyles.headingXl}>{data.title}</h1>
+        <div className={utilStyles.lightText}>
+          <Date dateString={data.date} />
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: data.contentHtml }} />
+      </article>
     </Layout>
   );
 }
