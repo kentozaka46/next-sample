@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 import { theme } from "themes";
+import { Responsive, ResponsiveProp } from "types/styles";
 
+// Themeの型
 export type AppTheme = typeof theme;
 
 type SpaceThemeKeys = keyof typeof theme.space;
@@ -9,12 +12,14 @@ type FontSizeThemeKeys = keyof typeof theme.fontSizes;
 type LetterSpacingThemeKeys = keyof typeof theme.letterSpacings;
 type LineHeightThemeKeys = keyof typeof theme.lineHeights;
 
+// 各Themeのキーの型
 export type Space = SpaceThemeKeys | (string & {});
 export type Color = ColorThemeKeys | (string & {});
 export type FontSize = FontSizeThemeKeys | (string & {});
 export type LetterSpacing = LetterSpacingThemeKeys | (string & {});
 export type LineHeight = LineHeightThemeKeys | (string & {});
 
+// ブレイクポイント
 const BREAKPOINTS: { [key: string]: string } = {
   sm: "640px", // 640px以上
   md: "768px", // 768px以上
@@ -34,18 +39,19 @@ export function toPropValue<T>(
   prop?: Responsive<T>,
   theme?: AppTheme
 ) {
-  if (prop === undefined) return;
+  if (prop === undefined) return undefined;
 
   if (isResponsivePropType(prop)) {
     const result = [];
     for (const responsiveKey in prop) {
       if (responsiveKey === "base") {
+        // デフォルトのスタイル
         result.push(
           `${propKey}: ${toThemeValueIfNeeded(
             propKey,
             prop[responsiveKey],
             theme
-          )}`
+          )};`
         );
       } else if (
         responsiveKey === "sm" ||
@@ -65,6 +71,7 @@ export function toPropValue<T>(
     }
     return result.join("\n");
   }
+
   return `${propKey}: ${toThemeValueIfNeeded(propKey, prop, theme)};`;
 }
 
@@ -85,6 +92,13 @@ const FONT_SIZE_KEYS = new Set(["font-size"]);
 const LETTER_SPACING_KEYS = new Set(["letter-spacing"]);
 const LINE_HEIGHT_KEYS = new Set(["line-height"]);
 
+/**
+ * Themeに指定されたCSSプロパティの値に変換
+ * @param propKey CSSプロパティ
+ * @param value CSSプロパティの値
+ * @param theme AppTheme
+ * @returns CSSプロパティの値
+ */
 function toThemeValueIfNeeded<T>(propKey: string, value: T, theme?: AppTheme) {
   if (
     theme &&
